@@ -1,0 +1,48 @@
+{
+  "images_folder": "images",
+  "output_folder": "results",
+  "pixels_per_um": 2.314,
+
+  "weights": {
+    "CPA": "dnn_model/stomatacomplexarea.h5",
+    "APA": "dnn_model/stomatalAPA.h5"
+  },
+  "group_weights": {},
+  "network_input_size": 832,
+  "detection_min_confidence": 0.7,
+  "save_overlays": true,
+
+  "spatial": {
+    "seed": 42,
+    "min_stomata_per_image": 5,
+    "compare_groups": [],
+
+    "ripley": {
+      "run": true,
+      "max_distance_um": 200,
+      "step_um": 1,
+      "n_simulations": 1999,
+      "n_permutations": 9999,
+      "size_null_model": false,
+      "n_size_null_simulations": 999
+    },
+    "moran": {
+      "run": true,
+      "neighbourhoods": ["knn5"],
+      "n_permutations": 999
+    },
+    "gistar": {
+      "run": true,
+      "neighbourhoods": ["knn5"],
+      "z_threshold": 1.65,
+      "n_null_permutations": 99
+    },
+    "kde": {
+      "run": true,
+      "bandwidth": 0.2,
+      "grid_size": 200,
+      "threshold": 0.7,
+      "save_maps": true
+    }
+  }
+}

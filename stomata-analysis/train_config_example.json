@@ -1,0 +1,25 @@
+{
+  "images_folder": "train_images",
+  "annotations": ["annotations/complex.json"],
+  "output_folder": "trained_models",
+  "model_name": "complex",
+
+  "init_weights": "coco",
+  "coco_weights": "dnn_model/mask_rcnn_coco.h5",
+  "validation_fraction": 0.1,
+  "seed": 42,
+
+  "image_size": 832,
+  "images_per_gpu": 2,
+  "epochs": 30,
+  "steps_per_epoch": 1000,
+  "validation_steps": 50,
+  "learning_rate": 0.001,
+  "layers": "heads",
+  "augmentation": true,
+
+  "autolabel_weights": "trained_models/complex_initial.h5",
+  "autolabel_output": "annotations/complex_autolabel.json",
+  "autolabel_category": "complex",
+  "detection_min_confidence": 0.7
+}
