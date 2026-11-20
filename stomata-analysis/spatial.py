@@ -128,15 +128,19 @@ def run_moran(stomata, cfg, pairs, out, rng_seed):
         pts, vals = d[["cx_um", "cy_um"]].to_numpy(), d.area_um2.to_numpy()
         for nb in mc["neighbourhoods"]:
             I, EI, p, isl = ac.morans_i(vals, ac.weights(pts, nb), mc["n_permutations"], rng)
-            rows.append(dict(group=g, unit=u, image=im, trait=model, neighbourhood=nb, n=len(d), I=I, EI=EI, p=p,
-                             share_without_neighbours=isl, significant_positive=(p < 0.05) and (I > EI)))
+            rows.append(dict(group=g, unit=u, image=im, trait=model, neighbourhood=nb, n=len(d), I=I, EI=EI,
+                             I_minus_EI=I - EI, p=p, share_without_neighbours=isl,
+                             significant_positive=(p < 0.05) and (I > EI)))
     img = pd.DataFrame(rows)
     img.to_csv(os.path.join(out, "moran_images.csv"), index=False)
+    # E[I] = -1/(n - 1) depends on the number of stomata per image, so images and groups with different densities
+    # are compared on I - E[I], averaged per unit; the unit mean of the raw I is kept for reference.
     units = (img.groupby(["trait", "neighbourhood", "group", "unit"])
-             .agg(I_mean=("I", "mean"), share_significant_positive=("significant_positive", "mean"),
+             .agg(I_minus_EI_mean=("I_minus_EI", "mean"), I_mean=("I", "mean"), EI_mean=("EI", "mean"),
+                  share_significant_positive=("significant_positive", "mean"),
                   n_images=("I", "size")).reset_index())
     units.to_csv(os.path.join(out, "moran_units.csv"), index=False)
-    compare_units(units, ["I_mean"], pairs, by=("trait", "neighbourhood")).to_csv(
+    compare_units(units, ["I_minus_EI_mean"], pairs, by=("trait", "neighbourhood")).to_csv(
         os.path.join(out, "moran_tests.csv"), index=False)
     print(f"  Moran's I: {len(img)} image x trait x neighbourhood results")
 
