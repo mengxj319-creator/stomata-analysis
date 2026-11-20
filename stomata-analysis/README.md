@@ -65,7 +65,7 @@ Relative paths in the configuration file are taken relative to the location of t
 |---|---|
 | `images_folder` | Folder with the images (`<group>/<unit>/<image>`) |
 | `output_folder` | Folder for the results |
-| `pixels_per_um` | **Pixel scale** of the images, pixels per µm (calibrate with a stage micrometer) |
+| `pixels_per_um` | **Pixel scale** of the images, pixels per µm (calibrate with a stage micrometer). The example value 2.0833 (0.48 µm per pixel) is the scale of the *Lilium* images in the paper |
 | `weights` | Weight files of the `CPA` and `APA` models; leave one empty (`null`) to run only the other |
 | `group_weights` | Optional other weights for some groups, e.g. `{"speciesB": {"CPA": "...", "APA": "..."}}` |
 | `network_input_size` | Size to which images are resized inside the network (832, as in training); any image size can be used |
@@ -107,7 +107,7 @@ Each analysis can be switched off with `"run": false`.
 | `ripley_curves.npz` | Mean L(r), envelopes and density-scaled L\*(r\*) of every unit |
 | `ripley_tests.csv` | Group comparisons: Welch and Mann–Whitney tests of the unit values; studentized permutation tests of the L(r) and L\*(r\*) curves |
 | `ripley_L.png` | Mean L(r) ± SE over units per group |
-| `moran_images.csv`, `moran_units.csv`, `moran_tests.csv` | Moran's I of CPA and APA per image, unit means, group comparisons |
+| `moran_images.csv`, `moran_units.csv`, `moran_tests.csv` | Moran's I of CPA and APA per image with its expectation E[I] and I − E[I]; unit means (`I_minus_EI_mean`, used for the tests; the raw `I_mean` for reference); group comparisons of `I_minus_EI_mean` |
 | `gistar_images.csv`, `gistar_units.csv`, `gistar_groups.csv`, `gistar_tests.csv` | Fraction of hot/cold spots per image and under the permutation null, excess over the null per unit and group, group comparisons |
 | `kde_images.csv`, `kde_units.csv`, `kde_groups.csv`, `kde_tests.csv` | High-density extent per image and unit, high-variability extent per group, group comparisons |
 | `kde_maps/` | Mean and std KDE maps per group (PNG and .npy) |
@@ -132,7 +132,9 @@ The algorithms are described in the accompanying paper ([citation to be added]).
   simulated in the same windows with the same numbers of points, using a global rank envelope test
   (Myllymäki et al. 2017). Curves of two groups are compared with a studentized permutation test (Hahn 2012),
   on the original scale and after density scaling (r\* = r√λ, L\* = L√λ).
-- **Moran's I**: row-standardised weights, permutation P value.
+- **Moran's I**: row-standardised weights, permutation P value. Because the expectation without spatial
+  autocorrelation, E[I] = −1/(n − 1), depends on the number of stomata n in an image, I − E[I] is calculated per
+  image, averaged per unit, and compared between groups.
 - **Getis-Ord Gi\***: binary weights including the focal point, analytical z-scores; the fraction of flagged
   points is compared with the fraction expected after permuting the trait values within the image.
 - **KDE**: Gaussian kernel on centroids normalised to the image size, maps min–max normalised per image.
