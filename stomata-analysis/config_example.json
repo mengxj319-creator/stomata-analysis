@@ -1,7 +1,7 @@
 {
   "images_folder": "images",
   "output_folder": "results",
-  "pixels_per_um": 2.314,
+  "pixels_per_um": 2.0833,
 
   "weights": {
     "CPA": "dnn_model/stomatacomplexarea.h5",
